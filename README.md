@@ -107,6 +107,9 @@ transform(first, it, f);
 
 // Only one pass, but may overrun the container.
 transform(first, predicate(pred), f);
+
+// One pass and safe:
+transform(first, either(predicate(pred), last), f);
 ```
 
 ## generator_iterator<Function>

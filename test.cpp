@@ -50,7 +50,10 @@ int main() {
     return [=](int y) { return y < x; };
   };
 
-  assert(alt::all_of(arr,  arr+3, equal_to(1)));
+  assert(alt::all_of(arr,  alt::either(std::end(arr),
+                                       alt::predicate(equal_to(1))),
+                     equal_to(1)));
+  assert(!alt::all_of(arr, std::end(arr), equal_to(1)));
   assert(alt::any_of(arr,  std::end(arr), equal_to(2)));
   assert(alt::none_of(arr, std::end(arr), equal_to(0)));
 

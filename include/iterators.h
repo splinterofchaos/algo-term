@@ -395,8 +395,6 @@ struct product_iterators : joined_iterators<Iterator1, Iterator2>
   using iter_base::iter1;
   using iter_base::iter2;
 
-  using iterator_category = std::input_iterator_tag;
-
   using value_type = std::result_of_t<BinaryOperation(
       typename std::iterator_traits<Iterator1>::value_type,
       typename std::iterator_traits<Iterator2>::value_type)>;
@@ -424,6 +422,28 @@ template<class Iterator1, class Iterator2, class BinaryOperation>
 product_iterators<Iterator1, Iterator2, BinaryOperation>
 iter_prod(Iterator1 iter1, Iterator2 iter2, BinaryOperation op) {
   return {iter1, iter2, std::move(op)};
+}
+
+template<class Iterator1, class Iterator2>
+struct either_iterator
+{
+  Iterator1 iter1;
+  Iterator2 iter2;
+
+  either_iterator(Iterator1 iter1, Iterator2 iter2)
+    : iter1(iter1), iter2(iter2)
+  { }
+
+  template<class Iterator>
+  bool equal_to(const Iterator& other) const {
+    return iter1 == other || iter2 == other;
+  }
+};
+
+template<class Iterator1, class Iterator2>
+either_iterator<Iterator1, Iterator2> either(Iterator1 iter1, Iterator2 iter2)
+{
+  return {iter1, iter2};
 }
 
 template<class ForwardIterator>
