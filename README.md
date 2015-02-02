@@ -49,7 +49,7 @@ copy(first, predicate(pred), out);                // copy_until
 ```
 While the above code may not look as pretty as the range-based version, it
 serves as a case-in-point that we have not exhausted the possibilities of
-iterators themselves, and that allowing <algorithm>'s functions to accept
+iterators themselves, and that allowing `<algorithm>`'s functions to accept
 iterator-terminator pairs can make them much more extensible.
 
 # Is this an STL or ranges replacement?
@@ -59,19 +59,21 @@ optimized as gcc, clang, or MSVC's implementations, some are missing, and some
 may have the wrong complexity. I would not recommend the use of this over Mr
 Niebler's range-v3 library. It is for demonstration purposes only.
 
-## Iterators and Terminators
+# Iterators and Terminators
 
-# iter_ref()
-**Iterator category:** std::iterator_traits<Iterator>::iterator_category
-**reference:** std::iterator_traits<Iterator>::reference
+## iter_ref()
+**Iterator category:** `std::iterator_traits<Iterator>::iterator_category`
+
+**reference:** `std::iterator_traits<Iterator>::reference`
 
 `iter_ref(iter)` is similar to if you wrote `std::ref(iter)`, except that
 `std::reference_wrapper`s can't be incremented, dereferenced, or passed to
 <algorithm> functions.
 
-# counting_iterator<Iterator> and take
-**Iterator category:** std::iterator_traits<Iterator>::iterator_category
-**Reference:** std::iterator_traits<Iterator>::reference
+## counting_iterator<Iterator> and take
+**Iterator category:** `std::iterator_traits<Iterator>::iterator_category`
+
+**Reference:** `std::iterator_traits<Iterator>::reference`
 
 The function `counter(iter, n=0)` constructs a counting iterator, `c`, which
 contains a base iterator (`c.base()`) and a count (`c.count`).
@@ -87,8 +89,9 @@ copy(counter(first), take(n), out);  // copy_n
 `take` is a struct with just one member, `count`, for comparison against
 counting iterators.
 
-# sentinel_iterator<Value> and predicate_iterator<Predicate>
+## sentinel_iterator<Value> and predicate_iterator<Predicate>
 **Iterator category:** N/A
+
 **Reference:** N/A
 
 `sentinel(val)` returns an iterator that terminates a range based on its value.
@@ -106,9 +109,10 @@ transform(first, it, f);
 transform(first, predicate(pred), f);
 ```
 
-# generator_iterator<Function>
-**Iterator category:** std::input_iterator_tag
-**Reference:** std::result_of_t<Function()> &
+## generator_iterator<Function>
+**Iterator category:** `std::input_iterator_tag`
+
+**Reference:** `std::result_of_t<Function()> &`
 
 `generator(f)` returns an iterator, `g`, with a value, `g.value` it updates on
 every increment with `g.value = g.f()`. Consider this example using the
@@ -131,12 +135,12 @@ int sum = accumulate(generator(Fib{}),
                      predicate([](int val) { return val < 100; }));
 ```
 
-# transform_iterator<Iterator, UnaryOperation>
-**Iterator category:** std::iterator_traits<Iterator>::iterator_category
-**Reference:** std::result_of_t<UnaryOperation(Iterator)>
+## transform_iterator<Iterator, UnaryOperation>
+**Iterator category:** `std::iterator_traits<Iterator>::iterator_category`
 
-`trans_iter(iter, f)` returns an iterator adaptor, `t`, such that `*t =
-f(*iter)`.
+**Reference:** `std::result_of_t<UnaryOperation(Iterator::reference)>`
+
+`trans_iter(iter, f)` returns an iterator adaptor, `t`, such that `*t = f(*iter)`.
 ```c++
 template<class InputIterator, class Terminator,
          class OutputIterator,
@@ -149,8 +153,10 @@ transform(InputIterator first, Terminator last,
 }
 ``` 
 
-# filter_iterator<InputIterator, Terminator, Predicate>
-**Iterator category:** std::input_iterator_tag
+## filter_iterator<InputIterator, Terminator, Predicate>
+**Iterator category:** `std::input_iterator_tag`
+
+**Reference:** `std::iterator_traits<InputIterator>::reference`
 
 Normally, in order to run an algorithm off of a filtered range, one would need
 to `copy_if` into a new containers first, making it a two-pass algorithm and
@@ -192,7 +198,7 @@ count_if(InputIterator first, Terminator last, Predicate pred)
 }
 ```
 
-# joined_iterators<Iterator1, Iterator2> and joined_first_end<Iterator>
+## joined_iterators<Iterator1, Iterator2> and joined_first_end<Iterator>
 
 **Iterator category:** The std::common_type_t of Iterator1 and 2's iterator
 category.
