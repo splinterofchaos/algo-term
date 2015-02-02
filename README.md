@@ -1,6 +1,6 @@
 ## Overview
 
-This library studies two concepts: <algormithm> rewritten for
+This library studies two concepts: `<algormithm>` rewritten for
 iterator-terminator pairs, and iterator adaptors as a way to customize and
 implement new algorithms.
 
@@ -14,7 +14,7 @@ This works very well for the STL containers it was conceived for, however for
 certain situations, `copy` does not work well. For example, one might want to
 copy a certain number of objects that may be less than the container's size, or
 perhaps copy all elements that meet a specific criteria. Therefor we have
-`copy_n` and `copy_if`. But what about <algorithm> functions that do not have
+`copy_n` and `copy_if`. But what about `<algorithm>` functions that do not have
 an `_if` or `_n` variant? Should all functions supply one? What about a variant
 like `copy_until`?
 
@@ -31,13 +31,14 @@ copy(rng | take_until(pred), out);  // copy_until
 ```
 This very elegantly solves the problem for ranges, but code using iterators
 remains in the dark. While the ranges proposal does recommend changes to
-<algorithm> such that iterator versions of the above should be possible, the
+`<algorithm>` such that iterator versions of the above should be possible, the
 [implementation](https://github.com/ericniebler/range-v3) does not offer such
-utilities.
+utilities for iterators as primatives (the iterators are implemented with 
+pointers to their ranges).
 
-This library implements both <algorithm> and iterator adaptors to enable this
+This library implements both `<algorithm>` and iterator adaptors to enable this
 functionality without the use of ranges by allowing the terminator to have a
-different type than the iterator for the range.
+different type than the iterator for the range. This change is [item 3.3.5 of the ranges proposal](https://ericniebler.github.io/std/wg21/D4128.html#an-iterables-end-may-have-a-different-type-than-its-begin).
 ```c++
 template<class InputIterator, class Terminator, class OutputIterator>
 OutputIterator copy(InputIterator first, Terminator last,
@@ -50,7 +51,9 @@ copy(first, predicate(pred), out);                // copy_until
 While the above code may not look as pretty as the range-based version, it
 serves as a case-in-point that we have not exhausted the possibilities of
 iterators themselves, and that allowing `<algorithm>`'s functions to accept
-iterator-terminator pairs can make them much more extensible.
+iterator-terminator pairs can make them much more extensible while we wait
+for the ranges proposal to finalize. (Hopefully, this will be a moot point
+by C++17.)
 
 # Is this an STL or ranges replacement?
 
@@ -68,7 +71,7 @@ Niebler's range-v3 library. It is for demonstration purposes only.
 
 `iter_ref(iter)` is similar to if you wrote `std::ref(iter)`, except that
 `std::reference_wrapper`s can't be incremented, dereferenced, or passed to
-<algorithm> functions.
+`<algorithm>` functions.
 
 ## counting_iterator<Iterator> and take
 **Iterator category:** `std::iterator_traits<Iterator>::iterator_category`
