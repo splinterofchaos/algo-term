@@ -659,6 +659,66 @@ flip_assign_iterator<Iterator> flipped(Iterator iter) {
   return flip_assign_iterator<Iterator>(iter);
 }
 
+/// Regular segment iterator: <iter, n>
+///
+/// Represents the segment, [iter, iter + n), and increments to the segment
+/// [iter + n, iter + n*2).
+///
+/// Inspired by /u/pfultz2's comments on reddit:
+/// http://www.reddit.com/r/cpp/comments/2ujgth/iterators_iterator_adaptors_sentinels_and/co9lw8s
+template<class RandomAccessIterator>
+struct regular_segment_iterator : alt::lifted_iterator<RandomAccessIterator>
+{
+  require_random_access_iterator<RandomAccessIterator> __ra;
+
+  using iterator = alt::lifted_iterator<RandomAccessIterator>;
+  using iterator::base;
+
+  RandomAccessIterator next;
+  std::size_t length;
+
+  // TODO: Implement +=, -= operations.
+  using iterator_category = std::input_iterator_tag;
+
+  using value_type = std::pair<RandomAccessIterator,  RandomAccessIterator>;
+  using reference  = std::pair<RandomAccessIterator&, RandomAccessIterator&>;
+  using pointer    = std::pair<RandomAccessIterator*, RandomAccessIterator*>;
+
+  using const_reference = std::pair<const RandomAccessIterator&,
+                                    const RandomAccessIterator&>;
+
+  regular_segment_iterator(RandomAccessIterator i, std::size_t l)
+    : iterator(i), next(i + l), length(l)
+  { }
+
+  reference operator * () {
+    return std::make_pair(std::ref(base()), std::ref(next));
+  }
+
+  const_reference operator * () const {
+    return std::make_pair(std::ref(base()), std::ref(next));
+  }
+
+  regular_segment_iterator& operator ++ () {
+    base() = next;
+    next += length;
+    return *this;
+  }
+
+  regular_segment_iterator operator ++ (int) {
+    auto ret = *this;
+    ++*this;
+    return ret;
+  }
+};
+
+template<class RandomAccessIterator>
+regular_segment_iterator<RandomAccessIterator>
+regular_segment(RandomAccessIterator i, std::size_t len)
+{
+  return {i, len};
+}
+
 struct Rank0 {};
 struct Rank1 : Rank0 {};
 

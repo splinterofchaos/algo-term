@@ -385,4 +385,17 @@ int main() {
     alt::partial_sum(xs, std::end(xs), ys);
     assert(alt::equal(std::begin(ys), std::end(ys), std::begin(zs)));
   }
+
+  {
+    int xs[] = {1,1,1, 2,2,2, 3,3,3};
+    int ys[3];
+    int zs[] = {3, 6, 9};
+
+    alt::transform(alt::regular_segment(xs, 3), std::end(xs),
+                   ys,
+                   [](auto&& rng) {
+                     return alt::accumulate(rng.first, rng.second, 0);
+                   });
+    assert(alt::equal(std::begin(ys), std::end(ys), std::begin(zs)));
+  }
 }
